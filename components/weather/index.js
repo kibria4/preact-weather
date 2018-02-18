@@ -1,8 +1,26 @@
 import { h, Component } from 'preact';
 import './style.css';
+import OpenWeatherAPI from '../../api/openWeather';
 
 
 export default class Weather extends Component {
+  getInitialState(){
+    return { isLoading: false };
+  }
+  handleSearch(location){
+    
+    var that = this;
+    
+    this.setState({
+      isLoading: true,
+      errorMessage: undefined,
+      location: undefined,
+      temp: undefined,
+      forecast: undefined
+    });
+    
+  }
+  
 	render() {
 		return (
       <main>
@@ -10,10 +28,12 @@ export default class Weather extends Component {
           <div class="container">
             <div class="row">
               <div class="col-xs-12 col-weather-search">
-                <form>
+                <form class="">
                   <div class="form-group">
                     <input type="text" autofocus="autofocus" class="form-control" id="weathercity" placeholder="Enter the City you want to know the weather about..." />
+                    
                   </div>
+                  <button type="submit" class="btn btn-default pull-right">Search</button>
                 </form>
               </div>
             </div>
