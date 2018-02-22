@@ -1,26 +1,41 @@
 import { h, Component } from 'preact';
 import './style.css';
-import OpenWeatherAPI from '../../api/openWeather';
+import OpenWeather from '../../api/openWeather';
+import axios from 'axios';
 
 
 export default class Weather extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {city: ''};
+    this.handleSearch = this.handleSearch.bind(this);
+  }
+
   getInitialState(){
     return { isLoading: false };
   }
-  handleSearch(location){
-    
-    var that = this;
-    
-    this.setState({
-      isLoading: true,
-      errorMessage: undefined,
-      location: undefined,
-      temp: undefined,
-      forecast: undefined
-    });
-    
+
+  handleSearchChange = (e) =>{
+    this.setState({city: e.target.value});
   }
-  
+
+  handleSearch = (e) => {
+    e.preventDefault();
+    var that = this;
+    var location = this.state.city;
+    console.log('handleSearch initiated! Value submitted is ' + location);
+    var ow = new OpenWeather();
+    ow.getCityCurrentWeather(location).then(response => {
+      this.parseResponse(response);
+    }, response => {
+      alert(response);
+    });
+  }
+
+  parseResponse = (parsedJson) => {
+    console.log(JSON.stringify(parsedJson));
+  }
+
 	render() {
 		return (
       <main>
@@ -28,12 +43,11 @@ export default class Weather extends Component {
           <div class="container">
             <div class="row">
               <div class="col-xs-12 col-weather-search">
-                <form class="">
+                <form class="" onSubmit={this.handleSearch}>
                   <div class="form-group">
-                    <input type="text" autofocus="autofocus" class="form-control" id="weathercity" placeholder="Enter the City you want to know the weather about..." />
-                    
+                    <input type="text" autofocus="autofocus" onChange={this.handleSearchChange} value={this.state.city} class="form-control" id="weathercity" placeholder="Enter the City you want to know the weather about..." />
                   </div>
-                  <button type="submit" class="btn btn-default pull-right">Search</button>
+                  <button type="submit" class="hidden">Search</button>
                 </form>
               </div>
             </div>

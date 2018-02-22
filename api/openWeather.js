@@ -6,11 +6,17 @@ const units = 'metric';
 const baseUrl = 'https://api.openweathermap.org/data/2.5/';
 const openWeatherApiUrl = 'weather?&appid=&units=metric';
 
-export default class OpenWeatherAPI {
-  getCityCurrentWeather(location) {
+class OpenWeather {
+
+  constructor(){
+
+  }
+
+  getCityCurrentWeather = (location) => {
+
     var locationUrlEncoded = encodeURIComponent(location);
     var currentWeatherUrl = `${baseUrl}weather?appid=${apiKey}&units=metric&q=${locationUrlEncoded}`;
-    
+
     return axios.get(currentWeatherUrl).then(res => {
       if(res.data.cod && res.message){
         throw new Error(res.message);
@@ -20,12 +26,12 @@ export default class OpenWeatherAPI {
     }, res => {
       throw new Error(res.message);
     });
-  }
-  
-  getCityForecastWeather(location) {
+  };
+
+  getCityForecastWeather = (location) => {
     var locationUrlEncoded = encodeURIComponent(location);
     var weatherForecastUrl = `${baseUrl}forecast?appid=${apiKey}&units=metric&q=${locationUrlEncoded}`;
-    
+
     return axios.get(weatherForecastUrl).then(res => {
       if(res.data.cod && res.message){
         throw new Error(res.message);
@@ -35,6 +41,8 @@ export default class OpenWeatherAPI {
     }, res => {
       throw new Error(res.message);
     });
-    
-  }
+
+  };
 }
+
+export { OpenWeather as default };
