@@ -8,12 +8,12 @@ export default class Weather extends Component {
   //Initial setup
   constructor(props) {
     super(props);
-    this.state = {city: '', isLoading: false};
+    this.state = {city: '', isLoading: false, locationEntered: false};
   }
 
   //initial values
   getInitialState(){
-    return { isLoading: false };
+    return { isLoading: false, locationEntered: false };
   }
 
   //As a user enters text in to the textfield, update the city variable before submission
@@ -91,7 +91,8 @@ export default class Weather extends Component {
       tempName: tempName,
       tempDesc: tempDesc,
       tempIcon: tempIcon,
-      tempHumidity: tempHumidity
+      tempHumidity: tempHumidity,
+      resultsShown: true
     });
   }
 
@@ -100,21 +101,36 @@ export default class Weather extends Component {
     console.log(res);
   }
 
+  //Clear results for new search
+  //Source: https://codepen.io/gaearon/pen/QKzAgB?editors=0010
+  resetState = () => {
+    this.setState({
+      locationEntered: false,
+      tempName: null,
+      tempDesc: null,
+      tempIcon: null,
+      tempHumidity: null,
+      city: ''
+    });
+    console.log('resetState called');
+  }
+
 	render() {
 
     var {isLoading, locationEntered, err} = this.state;
+    // var that = this;
 
     //Display reset button based on state of weather result
-    function renderReset(){
+    function renderReset(that) {
       if(locationEntered){
-        return <button type="reset" class="btn btn-default pull-right">Reset</button>
+        return <button type="reset" onclick={that.resetState()} class="btn btn-default pull-right">Reset</button>;
       } else {
-        return <button type="reset" className="hidden">Reset</button>
+        return;
       }
     }
 
     //Display a "loading" message while calling API
-    function renderMessage (){
+    function renderMessage() {
       if(isLoading){
         return <h3 class="text-center">Fetching weather...</h3>;
       } else {
@@ -123,6 +139,12 @@ export default class Weather extends Component {
       // else if(temp && location){
       //   // return <WeatherMessage location={location} temp={temp} />
       // }
+    }
+
+    let resetButton = null;
+
+    if(locationEntered){
+      resetButton = <ResetButton onClick={this.resetState} />
     }
 
 		return (
@@ -135,7 +157,11 @@ export default class Weather extends Component {
                   <div class="form-group">
                     <input type="text" autofocus="autofocus" onChange={this.handleSearchChange} value={this.state.city} class="form-control" id="weathercity" placeholder="Enter the City you want to know the weather about..." />
                   </div>
-                  {renderReset()}
+                  {resetButton}
+                  {
+                    //submit button hidden as user always hits enter
+                    //TODO display submit and reset button for usability
+                  }
                   <button type="submit" class="hidden">Search</button>
                 </form>
               </div>
@@ -167,7 +193,7 @@ export default class Weather extends Component {
                     <div class="panel panel-default">
                       <div class="panel-heading">Humidity</div>
                       <div class="panel-body">
-                        Humidity Level is ...
+                        <p>{this.state.tempHumidity}</p>
                       </div>
                     </div>
                   </div>
@@ -192,4 +218,15 @@ export default class Weather extends Component {
       </main>
 		);
 	}
+}
+
+//Display Reset Button
+//TODO put in separate file
+//Source: https://codepen.io/gaearon/pen/QKzAgB?editors=0010
+function ResetButton(props) {
+  return (
+    <button type="reset" class="btn btn-default pull-right" onClick={props.onClick}>
+      Reset
+    </button>
+  );
 }
